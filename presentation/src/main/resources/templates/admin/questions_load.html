@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>上传试题</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script th:src="@{js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{js/ref/jquerysession.js}"></script>
+    <script th:src="@{js/ref/jquery.form.js}"></script>
+    <script th:src="@{js/ref/fileinput.js}"></script>
+    <script th:src="@{js/ref/zh.js}"></script>
+    <script th:src="@{js/uploadQuestions.js}"></script>
+    <script th:src="@{/js/adminNav.js}"></script>
+    <link rel="stylesheet" th:href="@{css/bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{css/fileinput.css}"/>
+    <link rel="stylesheet" th:href="@{/css/adminNav.css}" />
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        if($.session.get('admin')==null){
+            window.location.href="http://localhost:10009/admin";
+        }
+        /*]]>*/
+    </script>
+</head>
+<body>
+<div th:include="common/adminNavbar :: admin_nav"></div>
+<a href="http://localhost:10004/excel/download"
+   style="margin-top: 8%;margin-left: 25%;font-size: 20px;width:45%;display: block;">下载试题模板</a>
+
+<form class="form-group" enctype="multipart/form-data" method="post"
+      style="margin-top: 6%;margin-left: 25%;width: 45%;" action="" id="questionsUpload">
+    <input id="questions" name="file" type="file" multiple="multiple" class="file-loading"
+           th:accept=".xlsx" required="required"/>
+    <!--<input type="submit" value="上传" class="btn btn-info"-->
+           <!--style="margin-top: 40px;margin-left: 30%;width: 30%;height: 45px;"/>-->
+</form>
+</body>
+
+<script type='text/javascript' th:inline="javascript">
+    $(document).ready(function () {
+        chooseActive("#import_q");
+    })
+//    $(function () {
+//        $("#questionsUpload").submit(function () {
+//            $(this).ajaxSubmit({
+//                url: 'http://localhost:10004/excel/importQuestions',
+//                type : 'POST',
+//                //  dataType : 'json',
+//                async: false,
+//                success : function(data) {
+//                    alert("上传成功");
+//                    document.getElementById("questions").value = "";
+//                }
+//            });
+//            return false;
+//        });
+//    });
+
+</script>
+</html>

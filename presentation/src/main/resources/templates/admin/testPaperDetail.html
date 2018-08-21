@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{/js/ref/jquerysession.js}"></script>
+    <script>
+        var email = $.session.get("admin");
+        if(email==null) {
+            window.location.href = "http://localhost:10009/admin";
+        }
+    </script>
+    <title>在线考试系统</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/css/adminNav.css}" />
+    <style>
+        .basic_info {
+            /*margin-left: 1%;*/
+            /*margin-right: 20%;*/
+            text-align: center;
+        }
+        /*body{*/
+            /*background-color: #eeeeee;*/
+        /*}*/
+        /*.container {*/
+            /*background-color: white;*/
+            /*min-height: 100%;*/
+            /*!*box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.15);*!*/
+        /*}*/
+        .test_label {
+            padding-left: 20px;
+        }
+        .question_block {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div th:include="common/adminNavbar :: admin_nav"></div>
+    <div class="container col-lg-offset-2 col-lg-8" id="paper_info" style="margin-top: 60px">
+        <div style="text-align: center"><h3>试卷信息</h3></div>
+        <div class="basic_info">
+            <div class="row">
+                <label class="test_label">姓名：</label>
+                <label id="name" th:text="${name}"></label>
+                <label class="test_label">学号：</label>
+                <label id="sid" th:text="${sid}"></label>
+                <label class="test_label">总分：</label>
+                <label id="score"></label>
+            </div>
+            <div class="row" >
+                <label class="test_label" id="course_label">科目：</label>
+                <label id="course_name"></label>
+                <label class="test_label">开始时间：</label>
+                <label id="start_time"></label>
+                <label class="test_label">结束时间：</label>
+                <label id="end_time"></label>
+            </div>
+        </div>
+        <div id="detail">
+
+        </div>
+    </div>
+</body>
+<script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/js/adminNav.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+    $(document).ready(function () {
+        chooseActive("#test_info");
+        getTest();
+        getScore();
+
+        $("#paper_info").css("min-height", window.innerHeight);
+        $("#paper_info").css("background-color", "white");
+        $("#paper_info").css("box-shadow", "0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.15)");
+//        var course_label = document.getElementById("course_label");
+//        $(".question_block").css("margin-left", course_label.offsetLeft-window.innerWidth*0.2);
+        getDetail();
+    });
+
+    function getTest() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:10008/getTest?testID="+[[${testID}]],
+            data: {},
+            success: function (data) {
+                document.getElementById("course_name").innerHTML = data.courseName;
+                document.getElementById("start_time").innerHTML = data.startTime;
+                document.getElementById("end_time").innerHTML = data.endTime;
+            }
+        })
+    }
+
+    function getScore() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:10008/getOneReportCard/"+[[${testID}]]+"/"+[[${sid}]],
+            data: {},
+            success: function (data) {
+                document.getElementById("score").innerHTML = data.mark;
+            }
+        })
+    }
+    
+    function getDetail() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:10008/getOneTestPaper/"+[[${testID}]]+"/"+[[${sid}]],
+            data:{},
+            success: function (data) {
+                var index = 1;
+                for (var i in data) {
+                    var question = data[i].question;
+                    var selections = data[i].selections;
+                    var answers = data[i].answers;
+                    var mark = data[i].mark;
+                    var selection_block = '';
+                    var str = 'A';
+                    for(var j in selections) {
+                        var select = String.fromCharCode(str.charCodeAt() + parseInt(j));
+                        selection_block+='<label class="test_label">'+select+'.&nbsp;</label><label>'+selections[j]+'</label>';
+                    }
+                    var question_block = '<div class="question_block" style="margin-left: 10%">\n' +
+                        '            <div class="question">'+index+'.&nbsp;'+question+'</div>\n' +
+                        '            <div class="selections">'+selection_block+'</div>\n' +
+                        '            <div class="stu_answer">\n' +
+                        '                <label class="test_label">学生答案：</label>\n' +
+                        '                <label>'+answers+'</label>\n' +
+                        '                <label class="test_label">得分：</label>\n' +
+                        '                <label>'+mark+'</label>\n' +
+                        '            </div>\n' +
+                        '        </div>';
+                    $("#detail").append(question_block);
+                    index++;
+                }
+
+            }
+        })
+    }
+</script>
+</html>

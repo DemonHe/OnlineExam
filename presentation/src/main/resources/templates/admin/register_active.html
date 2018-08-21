@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Active Register</title>
+    <link th:href="@{css/bootstrap.css}" rel="stylesheet" />
+    <script th:src="@{js/ref/jquery-3.2.1.min.js}"></script>
+
+
+    <style>
+        body {
+            padding-top: 100px;
+            padding-bottom: 40px;
+            background-color: #eee;
+        }
+        .acive{
+            max-width: 600px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+
+    </style>
+
+</head>
+<body th:style="'background:url(' + @{img/geometry.png} + ');'">
+    <div class="acive">
+        <button th:name="${code}" class="btn btn-lg btn-primary btn-block" type="button" id="active" onclick="Active()">开始激活验证</button>
+        <h1 id="result" style="visibility: hidden; text-align: center;color: #4897EA;margin-bottom: 20px;">验证成功，感谢您的注册</h1>
+        <button class="btn btn-lg btn-primary btn-block" type="button" id="register" onclick="window.location.href='http://localhost:10009/student'" style="visibility: hidden;">前往登录</button>
+
+    </div>
+
+    <script type="text/javascript">
+        var active = document.getElementById("active");
+//        var code1 = [[${code}]];
+//        alert(code1);
+        var result = document.getElementById("result");
+        var register = document.getElementById("register");
+        function Active(){
+            var code = active.getAttribute("name");
+            //alert(code);
+            $.ajax({
+                type:"post",
+                url:"http://localhost:10001/account/activeService",
+                data:{"code":code},
+                dataType:"json",
+                async:false,
+                success : function(data){
+                    if(data == false){
+
+                        result.innerHTML = "验证失败，请重新尝试。";
+                        result.style.visibility = "visible";
+                        register.style.visibility = "visible";
+                    }else{
+                        active.style.visibility = "hidden";
+                        result.style.visibility = "visible";
+                        register.style.visibility = "visible";
+                    }
+                },error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.status);
+                    alert(XMLHttpRequest.readyState);
+                    alert(textStatus);
+                }
+
+            });
+
+        }
+
+
+    </script>
+</body>
+</html>

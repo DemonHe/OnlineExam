@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>交卷成功</title>
+    <script th:src="@{js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{js/ref/jquerysession.js}"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        if($.session.get('sid')==null){
+            window.location.href="http://localhost:10009/student";
+        }else{
+            if($.session.get('testID')==null){
+                window.location.href="http://localhost:10009/welcome";
+            }
+        }
+        /*]]>*/
+    </script>
+</head>
+<body style="margin: 0;height: 100%;width: 100%;" onload="back()">
+
+<div style="background: white;height: 100%;width: 100%;position: absolute;">
+    <div style="background-color: #2A2F35;width: 100%;height: 8%;text-align: center;position: absolute;">
+    </div>
+
+    <div style="margin-left: 35%;margin-top: 16%;">
+        <div style="font-size: 40px;">交卷成功!</div>
+        <a href="http://localhost:10009/welcome">返回首页</a>
+        <span>（倒计时<span id="lefTime"></span>s后自动返回首页）</span>
+    </div>
+
+    <div style="background-color: #2A2F35;width: 100%;height: 12%;margin-top: 5%;position: absolute;bottom: 0;">
+    </div>
+</div>
+
+</body>
+<script>
+    var time=7;
+    function back(){
+        window.setTimeout('back()',1000);
+        if(time>0){
+            document.getElementById("lefTime").innerHTML=time;
+            time--;
+        }
+        else{
+            window.location.href="http://localhost:10009/welcome";
+        }
+    }
+
+</script>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>课程信息</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script th:src="@{js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{js/ref/jquerysession.js}"></script>
+    <script th:src="@{/js/adminNav.js}"></script>
+    <link rel="stylesheet" th:href="@{css/bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{css/custom_h.css}"/>
+    <link rel="stylesheet" th:href="@{/css/adminNav.css}" />
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        if($.session.get('admin')==null){
+            window.location.href="http://localhost:10009/admin";
+        }
+        /*]]>*/
+    </script>
+</head>
+<body>
+<div th:include="common/adminNavbar :: admin_nav"></div>
+<div style="margin-top: 30px" class="col-lg-offset-2 col-lg-8">
+<h3 style="margin-top: 70px;">基本信息</h3>
+
+<div style="margin-top: 30px;">
+    <div>
+        <label class="courseInfo_label">课程名&nbsp;&nbsp;</label>
+        <span id="coursename" class="courseInfo_span"></span>
+    </div>
+
+    <div>
+        <label class="courseInfo_label">课程简介</label>
+        <span id="introduction" class="courseInfo_span"></span>
+    </div>
+</div>
+
+<h3 style="margin-top: 40px;">考试信息</h3>
+
+<div style="margin-top: 25px;width: 90%;">
+    <table class="table" style="width: 100%;">
+        <thead>
+            <tr>
+                <th class="courseInfo_th">#</th>
+                <th class="courseInfo_th">开始时间</th>
+                <th class="courseInfo_th">结束时间</th>
+                <th class="courseInfo_th">题目数量</th>
+            </tr>
+        </thead>
+        <tbody id="testInfo_tbody">
+
+        </tbody>
+
+    </table>
+</div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    $(document).ready(function () {
+        chooseActive("#course_mng");
+    });
+
+    var courseID = [[${courseID}]];
+
+    $.ajax({
+        url: 'http://localhost:10010/course/getDetailofCourse',
+        type: 'POST',     // 请求类型，常用的有 GET 和 POST
+        dataType: "json",
+        data: {courseID:courseID},
+        success: function(data) { // 接口调用成功回调函数
+            // data 为服务器返回的数据
+            document.getElementById("coursename").innerHTML = data["coursename"];
+            var introduction = data["introduction"];
+            if(introduction==null||introduction.length==0)
+                introduction = "无.";
+            document.getElementById("introduction").innerHTML = introduction;
+
+            var tests = data["tests"];
+            var content = "";
+
+            for(var i = 0;i<tests.length;i++){
+                content+="<tr>" +
+                    "<th scope=\"row\" class=\"courseInfo_th\">"+tests[i]["id"]+"</th>" +
+                    "<td  class=\"courseInfo_td\">"+tests[i]["start"]+"</td>" +
+                    "<td  class=\"courseInfo_td\">"+tests[i]["end"]+"</td>" +
+                    "<td class=\"courseInfo_td\">"+tests[i]["qnum"]+"</td>" +
+                    "</tr>";
+            }
+
+            document.getElementById("testInfo_tbody").innerHTML = content;
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

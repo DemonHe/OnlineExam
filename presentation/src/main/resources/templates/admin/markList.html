@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{js/ref/jquerysession.js}"></script>
+    <script>
+        var email = $.session.get("admin");
+        if(email==null) {
+            window.location.href = "http://localhost:10009/admin";
+        }
+    </script>
+    <title>在线考试系统</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/css/adminNav.css}" />
+    <link th:href="@{/css/table_css/jquery.dataTables.min.css}" rel="stylesheet" media="screen"/>
+    <link th:href="@{/css/table_css/select.dataTables.min.css}" rel="stylesheet" media="screen"/>
+    <link th:href="@{/css/table_css/buttons.dataTables.min.css}" rel="stylesheet" media="screen"/>
+
+    <style>
+        .test_info {
+            padding-bottom: 15px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .select-area {
+            padding-bottom: 5px;
+            padding-right: 10px;
+        }
+        .test_label {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+<div th:include="common/adminNavbar :: admin_nav"></div>
+<div class="container col-lg-offset-2 col-lg-8" style="margin-top: 60px; ">
+    <div class="row"><h4>考试信息</h4></div>
+    <div class="test_info">
+        <div class="row">
+            <label class="test_label">考试号：</label>
+            <label id="testID" th:text="${testID}"></label>
+            <label class="test_label">考试科目：</label>
+            <label id="course"></label>
+            <label class="test_label">开始时间：</label>
+            <label id="start_time"></label>
+            <label class="test_label">结束时间：</label>
+            <label id="end_time"></label>
+        </div>
+    </div>
+    <div class="row">
+        <h4>成绩列表</h4>
+        <div class="col-lg-9">
+
+        </div>
+        <div class="select-area col-lg-1 ">
+            <button class="btn btn-info " id="select_all">全选</button>
+        </div>
+        <div class="select-area col-lg-1">
+            <button class="btn btn-info " id="cancel_select_all">取消</button>
+        </div>
+        <div class="select-area col-lg-1">
+            <button class="btn btn-info " id="generate">生成试卷</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="main-container">
+            <div class="table-container">
+                <table class="table display dataTable table-hover table-condensed table-striped table-sm" id="markList" aria-describedby="testInfo">
+                    <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th class="order-header text-left">学号</th>
+                        <th class="order-header text-left">姓名</th>
+                        <th class="order-header text-left">成绩</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/js/table_js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/js/table_js/dataTables.buttons.min.js}"></script>
+<script th:src="@{/js/table_js/dataTables.select.min.js}"></script>
+<script th:src="@{/js/adminNav.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+    $(document).ready(function () {
+        chooseActive("#test_info");
+        initTable();
+        setTestInfo();
+    });
+
+    function setTestInfo() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:10008/getTest?testID="+$("#testID").text(),
+            data: {},
+            success: function (data) {
+                document.getElementById("course").innerHTML = data.courseName;
+                document.getElementById("start_time").innerHTML = data.startTime;
+                document.getElementById("end_time").innerHTML = data.endTime;
+            }
+        })
+    }
+    function initTable() {
+        var table = $('#markList').dataTable({
+            dom: "Bfrtip",
+            "serverSide": true,
+            "processing": true,
+            pageLength: 20,
+            "ajax": {
+                url: "http://localhost:10008/getReportCards",
+                type: "POST",
+                dataSrc: function (data) {
+                    return data.list;
+                },
+                data: function (d) {
+                    d.testID = $("#testID").text();
+                }
+            },
+            rowID: "testID",
+            columns: [    //每行对应的JSON的键名
+                {data: "checkBox"},
+                { data: "sid" },
+                { data: "sname" },
+                { data: "mark" }
+            ],
+            select: false,  //行可以被选中
+            filter: false,  //没有使用DataTables默认的筛选组件
+            ordering: false,  //没有使用DataTables默认的排序方法
+            buttons: [],    //没有使用DataTables默认的button组件
+            language: {     //自定义表示语言
+                paginate: {
+                    first:    '第一页',
+                    previous: '上一页',
+                    next:     '下一页',
+                    last:     '最后一页'
+                },
+                "sProcessing": "处理中...",
+                "info": "第_PAGE_页，共_PAGES_页  共有记录_MAX_条",
+                "emptyTable": "",
+                "zeroRecords": "没有检索到记录",
+                "loadingRecords" : "载入中...",
+                "infoEmpty": "检索到记录0条",
+                "infoFiltered": "",
+            }
+        });
+    }
+
+    $(function () {
+        $("#select_all").click(function () {
+            $(".markcb").prop("checked", true);
+        })
+        $("#cancel_select_all").click(function () {
+            $(".markcb").prop("checked", false);
+        })
+    })
+
+    $("#generate").click(function () {
+        var sid = "";
+        $('input:checkbox[class=markcb]:checked').each(function(i){
+            sid=sid+"-"+$(this).val();
+        });
+        if(sid=='') {
+            alert("当前没有需要生成的试卷")
+            return;
+        }
+        window.location.href = "http://localhost:10009/testPapers/"+$("#testID").text()+"/"+sid;
+    })
+</script>
+</html>

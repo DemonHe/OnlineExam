@@ -1,0 +1,171 @@
+.testSet_label{
+    font-size: 16px;
+    /*font-family: "等线";*/
+}
+
+.course_a{
+    color: black;
+}
+
+.course_a:hover{
+    text-decoration: none;
+    color: black;
+}
+
+.course_card{
+    vertical-align: top;
+}
+
+.course_card:hover{
+    border: #a3a5a4 1px solid;
+    cursor: pointer;
+}
+
+.addcourse_label{
+    display: inline-block;
+    width: 20%;
+}
+
+.addcourse_input{
+    display: inline-block;
+    width: 70%;
+    margin-left: 8%;
+}
+
+.addcourse_dialog{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -250px 0 0 -200px;
+    z-index: 9999;
+}
+
+.addcourse_div{
+    width: 500px;
+    height: 400px;
+    background: #ffffff;
+    background: rgba(255,255,255,1);
+    /*opacity: .6;
+    -moz-opacity: .6;
+    -webkit-opacity: .6;*/
+    filter: alpha(opacity=50);
+    box-shadow: 0 0 30px black;
+    border-radius: 10px;
+
+}
+
+.addcourse_title{
+    float: left;
+    width: 500px;
+    height: 60px;
+    line-height: 60px;
+    border-bottom: 1px solid #cccccc;
+    position: relative;
+}
+
+.t_txt{
+    float: left;
+    margin-left: 20px;
+    font-size: 18px;
+    /*color: green;*/
+    position: relative;
+}
+.del{
+    float: right;
+    margin-right: 20px;
+    color: #8c8c8c;
+    position: relative;
+}
+.del:hover{
+    color: #000000;
+    cursor: pointer;
+}
+
+.bg_color{
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,.7) !important;
+    filter: alpha(opacity=40) !important;
+    position: fixed !important;
+    top: 0;
+    z-index: 99;
+}
+
+.courseInfo_label{
+    font-family: "等线 Light";
+    font-size: 18px;
+}
+
+.courseInfo_span{
+    font-size: 17px;
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.courseInfo_th{
+    font-family: "微软雅黑 Light";
+    font-size: 18px;
+}
+
+.courseInfo_td{
+    font-size: 16px;
+}
+
+.middle-panel{
+    margin-top: 8%;
+    padding-top: 5%;
+    width:54%;
+    margin-left: 23%;
+    height: 65%;
+    /*position:relative;*/
+    background: #fff!important;
+    box-shadow: 0 12px 24px 0px rgba(7,17,27,.2);
+    border-radius: 15px;
+    /*-moz-box-shadow:0px 2px 5px #333333;*/
+    /*-webkit-box-shadow:0px 2px 5px #333333;*/
+}
+
+.left_panel{
+    box-shadow: 0 12px 24px 0px rgba(7,17,27,.2);
+    border-radius: 0px 10px 10px 0px;
+}
+
+.progress_td{
+    cursor: hand;
+    background-color: white;
+    color: black;
+    font-size: 18px;
+}
+
+.progress_td:hover{
+    cursor: pointer;
+    background-color: rgba(225,225,225,0.5);
+}
+
+.question_content{
+    font-size: 26px;
+}
+
+.selection_content{
+    font-size: 19px;
+    margin-top: 10px;
+}
+
+.prev{
+    width:12%;
+    margin-left: 26px;
+}
+.next{
+    width:12%;
+    float: right;
+    /*margin-right: 10%;*/
+}
+
+
+#quiz-container{
+    margin-left: 10%;
+    margin-top: 1%;
+    padding-top: 3%;
+    width: 75%;
+    border-top:1px dashed lightgray;
+}

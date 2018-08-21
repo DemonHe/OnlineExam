@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--<![endif]-->
+<head>
+
+    <title>首页</title>
+    <!-- BOOTSTRAP CORE STYLE CSS -->
+    <link th:href="@{css/bootstrap.css}" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 30px;
+
+
+        }
+        h2,h3,h4{
+            font-family: 'Nova Flat';
+
+        }
+
+        .noti-div h4{
+            padding:10px;
+        }
+        .noti-div i {
+            display:block;
+            padding:5px;
+        }
+        .noti-div a,.noti-div a:hover {
+            text-decoration:none;
+        }
+        section {
+            padding:50px 0px 0px 0px;
+        }
+        .img-max-width {
+            max-width: 270px;
+        }
+        /* =============================================================
+            HEADER STYLES
+            ============================================================ */
+        #head {
+            padding:30px;
+            color:#fff;
+        }
+        #head span {
+            color:#ff8c00;
+            margin-right:5px;
+        }
+        #head .header-mid {
+            max-height:65px;
+        }
+
+        #head h4 {
+            font-size:15px;
+            font-weight:500;
+        }
+
+        /* =============================================================
+            MAIN SECTION STYLES
+           ============================================================ */
+        #main h3 {
+            color:#000;
+            padding:0px 0px 10px 0px;
+            line-height: 40px;
+        }
+        #main .hr-div hr{
+            padding-bottom:30px;
+
+        }
+        .logout-link {
+            margin-bottom:40px!important;
+        }
+    </style>
+
+
+</head>
+<body th:style="'background:url(' + @{img/geometry.png} + ');'">
+<div id="head" th:style="'background:url(' + @{img/binding_dark.png} + ');'">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-2">
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 text-center" >
+
+                <h1>Welcome to Online-Examination</h1>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2">
+            </div>
+        </div>
+    </div>
+</div>
+<section style="padding:100px 0px 0px 0px;" >
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-6 col-lg-offset-3  col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 ">
+                <div class="alert alert-info">
+                    <div class="media">
+                        <div class="pull-left">
+                            <img th:src="@{img/admin.png}" class="img-responsive" />
+                        </div>
+                        <div class="media-body">
+                            <h3 class="media-heading">管理员登录相关</h3>
+                            <p>
+                                对于所有的老师、管理人员；<br />
+                                请进入这个通道
+                            </p>
+                            <a th:href="@{/admin}" class="btn btn-primary" >Go TO Amin Login</a>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="alert alert-danger">
+                    <div class="media">
+                        <div class="pull-left">
+                            <img th:src="@{img/admin.png}" class="img-responsive" />
+                        </div>
+                        <div class="media-body">
+                            <h3 class="media-heading">学生用户登录相关</h3>
+                            <p>
+                                对于所有学生；<br />
+                                请进入这个通道
+                            </p>
+                            <a th:href="@{/student}" class="btn btn-danger">Go TO User Login</a>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script>
+
+</script>
+</body>
+</html>

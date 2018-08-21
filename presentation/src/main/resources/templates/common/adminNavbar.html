@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<header>
+    <link rel="stylesheet" th:href="@{/css/adminNav.css}" />
+</header>
+<div th:fragment="admin_nav">
+    <div class="container">
+        <div  class="navbar navbar-default navbar-fixed-top" id="adminNav">
+            <div class="col-lg-offset-2 col-lg-8">
+                <div class="navbar-header" style="margin-left: -30px">
+                    <a class="navbar-brand" id="sys_title" href="#">在线考试管理系统</a>
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="navbar-collapse collapse" id="navbar-main">
+                    <ul class="nav navbar-nav mynav" id="selectNav">
+                        <li id="course_mng"><a href="http://localhost:10009/allCourses">课程管理</a></li>
+                        <li id="import_q"><a href="http://localhost:10009/loadQuestions">导入试题</a></li>
+                        <li id="test_set"><a href="http://localhost:10009/addTest">考试设置</a></li>
+                        <li id="test_info"><a href="http://localhost:10009/testInfo">考试信息查询</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" style="">
+                        <li><a href="http://localhost:10009/admin" style="padding-right: 20px;">退出</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

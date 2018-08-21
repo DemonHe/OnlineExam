@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>等待考试</title>
+    <link rel="stylesheet" th:href="@{css/bootstrap.css}" />
+    <script th:src="@{js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{js/ref/jquerysession.js}"></script>
+    <script th:src="@{js/ref/jquery.countdown.min.js}"></script>
+    <script th:src="@{js/countdown.js}"></script>
+    <script >
+    var tid = $.session.get("testID");
+	if($.session.get('sid')==null){
+        window.location.href="http://localhost:10009/student";
+    }else{
+        if($.session.get('testID')==null){
+            window.location.href="http://localhost:10009/welcome";
+        }
+    }
+$(document).ready(function() {
+	aaa();
+});
+
+function aaa(){
+	$.ajax({
+		type : "POST",
+		url : "http://localhost:10006/start",
+		data : {
+			testID : tid
+		},
+		xhrFields : {
+			withCredentials : true
+		},
+		crossDomain : true,
+		success : function(data) {
+			setColock(data);
+		}
+	});
+}
+
+function setColock(endtime) {
+    $('#clock').countdown(endtime, function(event) {
+        $(this).html("距离考试开始还有  "+event.strftime('%M:%S'));
+        if(event.strftime('%M:%S')=='00:00'){
+        	 $('#confirm').removeAttr("disabled");
+        	 
+        }
+
+    });
+}
+</script>
+</head>
+<body>
+    <div style="background-color: #2A2F35;width: 100%;height: 8%;text-align: center;position: absolute;">
+        <div id="clock" style="color: white;font-size: 26px;margin-top: 1%;"></div>
+    </div>
+    <div class="container col-lg-offset-3 col-lg-6" style="margin-top: 10%;">
+        <div style="font-family:等线;font-size: 20px;font-weight: bold">考试须知</div>
+        <div style="font-family:等线;font-size: 18px;">
+            1.考题由计算机从题库中随机抽取生成。<br/>
+            2.进入考试页面后，系统自动倒计时。规定时间内完成答题可点击“提交答卷”提前交卷，超过规定时间系统会自动提交答卷。试卷一旦提交，将不能再次考试。<br/>
+            3.考试过程中，可点击“查看进度”查看作答情况，蓝色是已作答题目，黄色是标记过的题目，白色是未作答题目，可点击题号跳转到相应题目。<br/>
+            4.请诚信考试，关闭手机等通讯工具。
+        </div>
+        <div style="text-align: right">
+            <button class="btn btn-lg btn-primary" id="confirm" onclick="start()" disabled="disabled">开始考试</button>
+        </div>
+    </div>
+
+</body>
+<script>
+    function start() {
+        window.location.href = "http://localhost:10009/exam";
+    }
+</script>
+</html>

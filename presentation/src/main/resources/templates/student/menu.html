@@ -1,0 +1,367 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Online Examination</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+<script th:src="@{js/ref/jquerysession.js}"></script>
+<script>
+	var sid = $.session.get("sid");
+	var name = $.session.get("name");
+	var test;
+	if (sid == null || name == null) {
+		window.location.href = "http://localhost:10009/student";
+	}
+</script>
+<link rel="stylesheet" th:href="@{css/bootstrap.css}" />
+<style>
+.modal-content {
+	margin-top: 15%;
+	width: 80%;
+}
+
+.container {
+	padding-top: 4%;
+	padding-bottom: 3%;
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.navbar-fixed-top {
+	font-family: "Microsoft YaHei UI";
+}
+
+.glyphicon-user {
+	color: #218e1f;
+}
+
+#password {
+	margin-bottom: 1px;
+}
+
+#alert {
+	width: 100%;
+	height: 10px;
+	color: #eb3824;
+}
+
+.modal-title {
+	color: #3476cb;
+	font-weight: bold
+}
+
+.title {
+	color: grey;
+	margin-bottom: 8%;
+}
+
+#confirm {
+	height: 35px;
+	padding: 0;
+	margin-top: 30px;
+}
+
+#row1 {
+	margin-top: 10%;
+	margin-left: 15%;
+	margin-right: 15%;
+}
+
+#testlist {
+	margin-top: 2%;
+	margin-left: 15%;
+	margin-right: 15%;
+}
+
+.aaa {
+	margin-top: 50px;
+	color: grey;
+	height: 20px;
+}
+</style>
+<script th:src="@{js/ref/jquery.min.js}"></script>
+<script th:src="@{js/ref/bootstrap.min.js}"></script>
+<script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+<script th:src="@{js/ref/jquerysession.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+	$(document).ready(function() {
+		aaa();
+	});
+
+	function take(tid) {
+		$.session.set('testID', tid);
+		test = tid;
+		$.ajax({
+			type : "POST",
+			url : "http://localhost:10002/mail/sendEmail",
+//			dataType : "json",
+			data : {
+				tid : tid,
+				sid : sid
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			crossDomain : true,
+			success : function(data) { // 接口调用成功回调函数
+			}
+		});
+	}
+
+	function removeError() {
+        document.getElementById("alert").innerHTML = '';
+    }
+
+	function init() {
+
+        $.ajax({
+			type : "POST",
+			url : "http://localhost:10005/init",
+			data : {
+				studentID : sid,
+				testID : test
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			crossDomain : true,
+			success : function(data) { // 接口调用成功回调函数
+				window.location.href = "http://localhost:10009/waiting";
+			}
+		});
+	}
+	
+	function check(){
+		var code = document.getElementById("password").value;
+		$.ajax({
+			type : "POST",
+			url : "http://localhost:10002/mail/verify",
+//			dataType : "json",
+			data : {
+				tid : test,
+				code : code
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			crossDomain : true,
+			success : function(data) { // 接口调用成功回调函数
+				if (data == '1')
+					init();
+				else
+					document.getElementById("alert").innerHTML = '考试号码错误';
+			}
+		});
+	}
+
+	function aaa() {
+
+		document.getElementById("l2").setAttribute("class", "nonActive");
+		document.getElementById("l3").setAttribute("class", "nonActive");
+		document.getElementById("l1").setAttribute("class", "active");
+		$
+				.ajax({
+					type : "POST",
+					url : "http://localhost:10005/undone",
+					dataType : "json",
+					data : {
+						studentID : sid
+					},
+					xhrFields : {
+						withCredentials : true
+					},
+					crossDomain : true,
+					success : function(data) { // 接口调用成功回调函数
+						// data 为服务器返回的数据
+						var content = "<tbody>";
+						var count = 0;
+						for ( var i in data) {
+							content += "<tr>";
+							content += "<td>" + i + "</td>";
+							content += "<td>" + data[i].tid + "</td>";
+							content += "<td>" + data[i].cname + "</td>";
+							content += "<td>" + data[i].start + "</td>";
+							content += "<td>" + data[i].end + "</td>";
+							content += "</tr>";
+							count++;
+						}
+						content += "</tbody>";
+						if (count == 0) {
+							document.getElementById("testlist").innerHTML = '<div class="aaa"><h5>还没有考试哦</h5></div>';
+						} else {
+
+							document.getElementById("testlist").innerHTML = '<table class="table table-striped" id="table">';
+							document.getElementById("table").innerHTML += "<thead><tr><th>#</th><th>考试名称</th><th>课程</th><th>开始时间</th><th>结束时间</th></tr></thead>";
+							document.getElementById("table").innerHTML += content
+									+ '</table>';
+						}
+					}
+				});
+	}
+
+	function bbb() {
+		document.getElementById("l1").setAttribute("class", "nonActive");
+		document.getElementById("l3").setAttribute("class", "nonActive");
+		document.getElementById("l2").setAttribute("class", "active");
+		$
+				.ajax({
+					type : "POST",
+					url : "http://localhost:10005/processing",
+					dataType : "json",
+					data : {
+						studentID : sid
+					},
+					xhrFields : {
+						withCredentials : true
+					},
+					crossDomain : true,
+					success : function(data) { // 接口调用成功回调函数
+						// data 为服务器返回的数据
+						var content = "<tbody>";
+						var count = 0;
+						for ( var i in data) {
+							content += "<tr>";
+							content += "<td>" + i + "</td>";
+							content += "<td>" + data[i].tid + "</td>";
+							content += "<td>" + data[i].cname + "</td>";
+							content += "<td>" + data[i].start + "</td>";
+							content += "<td>" + data[i].end + "</td>";
+							content += '<td><a data-toggle="modal" data-target="#myModal" onclick="take('
+									+ data[i].tid + ')">参加考试</a></td>';
+							content += "</tr>";
+							count++;
+						}
+						content += "</tbody>";
+						if (count == 0) {
+							document.getElementById("testlist").innerHTML = '<div class="aaa"><h5>还没有考试哦</h5></div>';
+						} else {
+							document.getElementById("testlist").innerHTML = '<table class="table table-striped" id="table">';
+							document.getElementById("table").innerHTML += '<thead><tr><th>#</th><th>考试名称</th><th>课程</th><th>开始时间</th><th>结束时间</th><th>参加考试</th></tr></thead>';
+							document.getElementById("table").innerHTML += content
+									+ '</table>';
+						}
+					}
+				});
+	}
+
+	function ccc() {
+		document.getElementById("l2").setAttribute("class", "nonActive");
+		document.getElementById("l1").setAttribute("class", "nonActive");
+		document.getElementById("l3").setAttribute("class", "active");
+		$
+				.ajax({
+					type : "GET",
+					url : "http://localhost:10005/accomplished",
+					dataType : "json",
+					data : {
+						studentID : sid
+					},
+					xhrFields : {
+						withCredentials : true
+					},
+					crossDomain : true,
+					success : function(data) { // 接口调用成功回调函数
+						// data 为服务器返回的数据
+						var content = "<tbody>";
+						var count = 0;
+						for ( var i in data) {
+							content += "<tr>";
+							content += "<td>" + i + "</td>";
+							content += "<td>" + data[i].tid + "</td>";
+							content += "<td>" + data[i].cname + "</td>";
+							content += "<td>" + data[i].start + "</td>";
+							content += "<td>" + data[i].end + "</td>";
+							content += "<td>" + data[i].mark + "</td>";
+							content += "</tr>";
+							count++;
+						}
+						content += "</tbody>";
+						if (count == 0) {
+							document.getElementById("testlist").innerHTML = '<div class="aaa"><h5>还没有考试哦</h5></div>';
+						} else {
+							document.getElementById("testlist").innerHTML = '<table class="table table-striped" id="table">';
+							document.getElementById("table").innerHTML += "<thead><tr><th>#</th><th>考试名称</th><th>课程</th><th>开始时间</th><th>结束时间</th><th>考试成绩</th></tr></thead>";
+							document.getElementById("table").innerHTML += content
+									+ '</table>';
+						}
+					}
+				});
+	}
+</script>
+</head>
+<body>
+
+	<div>
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed"
+						data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+						aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" style="color: #218e1f; font-weight: bold">Online
+						Examination</a>
+				</div>
+
+				<div class="collapse navbar-collapse"
+					id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav navbar-right">
+						<li id='loginBtn'><a href='http://localhost:10009/logout'
+							id='signature'><span class='glyphicon glyphicon-user'
+								aria-hidden='true'>&nbsp;</span><span id="hello"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登出</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</div>
+
+	<div id="row1" role="navigation">
+		<ul class="nav nav-tabs">
+			<li id="l1" role="presentation" class="active" onclick="aaa()"><a
+				id="a1" href="#">&nbsp;&nbsp;未开始&nbsp;&nbsp;</a></li>
+			<li id="l2" role="presentation" class="nonactive" onclick="bbb()"><a
+				id="a2" href="#">&nbsp;&nbsp;进行中&nbsp;&nbsp;</a></li>
+			<li id="l3" role="presentation" class="nonactive" onclick="ccc()"><a
+				id="a3" href="#">&nbsp;&nbsp;已结束&nbsp;&nbsp;</a></li>
+		</ul>
+	</div>
+
+	<div id="testlist"></div>
+
+	<!-- 模态框（Modal） -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" id="close_btn"
+						data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel"
+						style="padding-left: 13px">Online Examination</h4>
+				</div>
+				<div class="modal-body">
+					<div class="container">
+
+						<form class="form">
+							<h4 class="title" id="title">考试登录</h4>
+							<input type="text" id="password" class="form-control"
+								placeholder="请输入邮箱中的考试号码" autofocus="autofocus" onfocus="removeError()"/>
+							<div id="alert"></div>
+							<button class="btn btn-lg btn-primary btn-block" id="confirm"
+								onclick='check()'>确认</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+	<script>
+		document.getElementById("hello").innerHTML = 'Hello, ' + name + '!';
+	</script>
+</body>
+</html>

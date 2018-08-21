@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>课程管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script th:src="@{js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{js/ref/jquerysession.js}"></script>
+    <script th:src="@{js/ref/jquery.form.js}"></script>
+    <script th:src="@{js/coursesManage.js}"></script>
+    <script th:src="@{js/addCourseDialog.js}"></script>
+    <script th:src="@{/js/adminNav.js}"></script>
+    <link rel="stylesheet" th:href="@{css/bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{css/card.css}"/>
+    <link rel="stylesheet" th:href="@{css/custom_h.css}"/>
+    <link rel="stylesheet" th:href="@{/css/adminNav.css}" />
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        if($.session.get('admin')==null){
+            window.location.href="http://localhost:10009/admin";
+        }
+        /*]]>*/
+    </script>
+</head>
+<body>
+<div th:include="common/adminNavbar :: admin_nav"></div>
+<div class="col-lg-offset-2 col-lg-8" style="margin-top: 60px">
+<form method="post" action="" id="searchForm" style="width: 30%;margin-top: 5%;">
+    <input type="text" name="coursename" id="coursename" style="display: inline-block;width: 70%;" placeholder="课程名"/>
+    <input class="btn btn-primary" type="submit" style="display: inline-block;width: 20%;margin-left: 5%;" value="搜索"/>
+</form>
+
+<div id="coursesPanel" style="width: 90%;">
+
+    <!--<div class="card" style="width:301px;margin-left: 5%;margin-top:5%;display: inline-block;">-->
+    <!--<img class="card-img-top" th:src="@{img/41.jpg}" alt="Card image cap" width="300" height="170"/>-->
+    <!--<div class="card-block">-->
+    <!--<h4 class="card-title">课程名</h4>-->
+    <!--<p class="card-text">简介：无.</p>-->
+    <!--<a href="#" class="btn btn-primary">查看详情</a>-->
+    <!--<a href="#" class="btn btn-danger">删除</a>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <!--<div class="card" style="width:301px;margin-left: 5%;margin-top:5%;display: inline-block;">-->
+    <!--<img class="card-img-top" th:src="@{img/41.jpg}" alt="Card image cap" width="300" height="170"/>-->
+    <!--<div class="card-block">-->
+    <!--<h4 class="card-title">课程名</h4>-->
+    <!--<p class="card-text">简介：无.</p>-->
+    <!--<a href="#" class="btn btn-primary">查看详情</a>-->
+    <!--<a href="#" class="btn btn-danger">删除</a>-->
+    <!--</div>-->
+    <!--</div>-->
+
+</div>
+
+<div class="addcourse_dialog" id="add_box" style="display: none;">
+
+    <div class="addcourse_div">
+        <div class="addcourse_title">
+            <span class="t_txt">添加课程</span>
+            <span class="del" onClick="deleteLogin()">X</span>
+        </div>
+
+        <form action="" method="post" id="addCourseForm" style="width: 80%;margin-left: 8%;padding-top:19%;">
+
+            <div style="overflow: hidden;margin-top: 20px;">
+                <label style="color: red;display: none;margin-left:30%;"
+                       id="addcourse_error">课程名称已存在</label>
+                <label class="addcourse_label">课程名称</label>
+                <input type="text" name="coursename" value="" id="addcoursename" onfocus="removeError()"
+                       class="addcourse_input form-control" required="required"/>
+            </div>
+
+            <div style="overflow: hidden;margin-top: 30px;">
+                <label class="addcourse_label" style="vertical-align: top;">课程简介</label>
+                <textarea type="text" name="introduction" value=""
+                          class="form-control addcourse_input"></textarea>
+            </div>
+
+            <div style="overflow: hidden;margin-top: 50px;margin-left: 25%;">
+                <input type="submit" value="添加" class="btn btn-info" style="width: 30%;"/>
+                <input type="reset" value="重置" class="btn btn-default" style="width: 30%;margin-left: 8%;"/>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div class="bg_color" onClick="deleteLogin()" id="bg_filter" style="display: none;"></div>
+</div>
+<script type='text/javascript' th:inline="javascript">
+    $(document).ready(function () {
+        chooseActive("#course_mng");
+    })
+</script>
+</body>
+</html>

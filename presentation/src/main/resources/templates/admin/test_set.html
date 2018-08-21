@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>考试设置</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script th:src="@{js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{js/ref/jquerysession.js}"></script>
+    <script th:src="@{js/ref/jquery.form.js}"></script>
+    <script th:src="@{js/setTest.js}"></script>
+    <script th:src="@{/js/adminNav.js}"></script>
+    <link rel="stylesheet" th:href="@{css/bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{css/custom_h.css}"/>
+    <link rel="stylesheet" th:href="@{css/fileupload.css}"/>
+    <link rel="stylesheet" th:href="@{/css/adminNav.css}" />
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        if($.session.get('admin')==null){
+            window.location.href="http://localhost:10009/admin";
+        }
+        /*]]>*/
+    </script>
+</head>
+<body>
+<div th:include="common/adminNavbar :: admin_nav"></div>
+<div class="container" style="margin-top: 30px;width:100%;">
+<form class="form-horizontal" style="margin-top: 5%;margin-left: 25%;width: 70%;"
+      method="post" enctype="multipart/form-data" action="" id="testSet">
+    <h4>基本设置</h4>
+
+    <div class="form-group" style="width: 70%;margin-top: 3%;">
+        <label class="col-sm-2 control-label testSet_label">课程名称</label>
+        <div class="col-sm-7">
+            <select id="coursename" name="coursename" class="form-control">
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group" style="width: 70%;">
+        <label class="col-sm-2 control-label testSet_label">开始时间</label>
+        <div class="col-sm-7">
+            <input type="datetime-local" id="starttime" name="starttime"
+                   class="form-control" required="required"/>
+        </div>
+    </div>
+
+    <div class="form-group" style="width: 70%;">
+        <label class="col-sm-2 control-label testSet_label">结束时间</label>
+        <div class="col-sm-7">
+            <input type="datetime-local" id="endtime" name="endtime"
+                   class="form-control" required="required"/>
+        </div>
+    </div>
+
+    <div class="form-group" style="width: 70%;">
+        <label class="col-sm-2 control-label testSet_label">题目数量</label>
+        <div class="col-sm-7">
+            <input id="qnum" name="qnum" type="number" onchange="generateScoreSet()"
+                   class="form-control" required="required"/>
+        </div>
+    </div>
+
+    <div class="form-group" style="width: 70%;">
+        <label class="col-sm-2 control-label testSet_label">考生名单</label>
+        <div class="col-sm-7">
+            <div class="uploader white" style="width:100%;">
+                <input type="text" class="filename" readonly="readonly" style="width:80%;"/>
+                <input type="button" name="file" class="button" value="选择文件" style="width:20%;"/>
+                <input id="slist" name="slistfile" type="file" th:accept=".xlsx"
+                       required="required"/>
+            </div>
+        </div>
+    </div>
+
+
+    <h4 style="margin-top: 4%;">具体题目分数设置</h4>
+    <div id="detailscore" style="margin-top: 3%;"></div>
+
+    <input type="submit" value="提交" class="btn btn-info" style="margin-top:2%;margin-left: 12%;width:12%;"/>
+    <input type="reset" value="重置" class="btn btn-default" style="margin-top:2%;margin-left: 5%;width:12%;"/>
+</form>
+</div>
+<script>$(function(){
+    $("#slist").change(function(){
+        $(this).parents(".uploader").find(".filename").val(document.getElementById("slist").files[0].name);
+    });
+    $("#slist").each(function(){
+        if($(this).val()==""){$(this).parents(".uploader").find(".filename").val("");}
+    });
+    $(document).ready(function () {
+        chooseActive("#test_set");
+    })
+});
+</script>
+
+
+</body>
+</html>

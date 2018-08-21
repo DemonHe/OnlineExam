@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Student Register</title>
+    <!-- Le styles -->
+    <!--<link th:href="@{css/login.css}" rel="stylesheet" />-->
+    <link th:href="@{css/bootstrap.css}" rel="stylesheet" />
+    <link th:href="@{css/sign_reg.css}" rel="stylesheet"/>
+    <script th:src="@{js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{js/ref/jquerysession.js}"></script>
+    <script th:src="@{js/signInWarning.js}"></script>
+    <style>
+
+    </style>
+
+</head>
+
+<body th:style="'background:url(' + @{img/geometry.png} + ');'">
+
+<div class="container">
+
+    <form class="form-signin">
+        <h2 class="form-signin-heading">学生账号注册</h2>
+        <label for="number" class="sr-only">学号</label>
+        <input type="text" id="number" class="form-control" placeholder="学号" required="required" autofocus="autofocus" />
+        <label for="password" class="sr-only">密码</label>
+        <input type="password" id="password" class="form-control" placeholder="密码" required="required" />
+        <label for="email" class="sr-only">邮箱地址</label>
+        <input type="email" id="email" class="form-control" placeholder="邮箱地址" required="required"/>
+        <label for="name" class="sr-only">姓名</label>
+        <input type="text" id="name" class="form-control" placeholder="姓名" required="required"/>
+        <label for="grade" class="sr-only">年级</label>
+        <input type="text" id="grade" class="form-control" placeholder="年级" />
+        <div>
+            <label style="color : #FF2A1A; display: none;" id="fail">
+                注册失败,邮箱已经被注册
+            </label>
+        </div>
+        <div>
+            <label style="color : #FF2A1A;">
+                <a th:href="@{/student}">用已有账号登录</a>
+            </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="button" id="submit">注册</button>
+        <!--<button class="btn btn-lg btn-primary btn-block" type="button" id="register" onclick="window.location.href='http://localhost:10009/student'">用已有账号登录</button>-->
+    </form>
+
+</div> <!-- /container -->
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+<script>
+
+    var fail = document.getElementById("fail");
+    $("#submit").on("click",function () {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        var name = document.getElementById("name").value;
+        var number = document.getElementById("number").value;
+        var grade = document.getElementById("grade").value;
+        var type = "Student";
+
+        var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+
+        if(email == ""|| password==""|| name==""|| number==""|| grade==""){
+            fail.innerHTML = "输入信息不可为空";
+            fail.style.display = "";
+        }else if(!myreg.test(email)){
+            fail.innerHTML = "邮箱格式不正确";
+            fail.style.display = "";
+        }else{
+            $.ajax({
+                type:"post",
+                url:"http://localhost:10001/account/register",
+                contentType: 'application/json;charset=UTF-8',
+                data:"{\"email\":\""+email+"\",\"password\":\""+password+"\",\"type\":\""+type+"\",\"name\":\""+name+"\",\"sid\":\""+number+"\",\"grade\":\""+grade+"\"}",
+                dataType:"json",
+                async:false,
+                success : function(data){
+//                alert(data);
+
+                    if(data == 0){
+                        fail.style.color = "#00F72C";
+                        fail.innerHTML = "注册成功，验证邮件已发送至邮箱";
+                        fail.style.display = "";
+                    }else if(data == 1){
+                        fail.innerHTML = "注册失败,学号已经被注册";
+                        fail.style.display = "";
+                    }else{
+                        fail.innerHTML = "注册失败,邮箱已经被注册";
+                        fail.style.display = "";
+                    }
+//                window.location.href = "http://localhost:10009/student";
+
+                },error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.status);
+                    alert(XMLHttpRequest.readyState);
+                    alert(textStatus);
+                }
+            });
+        }
+
+
+    });
+
+</script>
+
+</body>
+</html>
+

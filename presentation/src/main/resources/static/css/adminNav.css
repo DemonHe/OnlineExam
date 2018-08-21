@@ -1,0 +1,49 @@
+#myNav{
+    background-color: transparent;
+    border:transparent;
+}
+#adminNav{
+    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.15);
+}
+.test{
+    color: #aab7d1;
+}
+
+#sys_title{
+    /*color: white;*/
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "等线";
+    color: white;
+}
+
+.navbar-default{
+    border:none;
+    background-color: #3d444c;
+    color: #ccc;
+}
+.navbar-default .navbar-text {
+    color: #ccc;
+    font-family: "微软雅黑";
+    font-size: 15px;
+}
+.navbar-default .navbar-nav > li > a {
+    color: #ccc;
+    font-family: "微软雅黑";
+    font-size: 15px;
+}
+.navbar-default .navbar-brand {
+    color: #ccc;
+    font-size: 16px;
+    font-weight: lighter;
+}
+.navbar-default .mynav > li > a:hover,
+.navbar-default .mynav > li > a:focus {
+    color:white;
+    /*background-color: #fff;*/
+}
+
+.navbar-default .navbar-right > li > a:hover,
+.navbar-default .mynnavbar-rightav > li > a:focus {
+    color:white;
+}

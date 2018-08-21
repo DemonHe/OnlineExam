@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{js/ref/jquerysession.js}"></script>
+    <script>
+        var email = $.session.get("admin");
+        if(email==null) {
+            window.location.href = "http://localhost:10009/admin";
+        }
+    </script>
+    <title>在线考试系统</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/css/adminNav.css}" />
+    <link th:href="@{/css/table_css/jquery.dataTables.min.css}" rel="stylesheet" media="screen"/>
+    <link th:href="@{/css/table_css/select.dataTables.min.css}" rel="stylesheet" media="screen"/>
+    <link th:href="@{/css/table_css/buttons.dataTables.min.css}" rel="stylesheet" media="screen"/>
+    <link th:href="@{/css/bootstrap-datetimepicker.min.css}" rel="stylesheet" media="screen"/>
+    <style>
+        .filter-area{
+            padding-top: 15px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        #testInfo tr:hover {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div th:include="common/adminNavbar :: admin_nav"></div>
+    <div class="container col-lg-offset-2 col-lg-8" style="margin-top: 60px">
+        <form class="filter-area form-horizontal testInfo_form">
+            <div class="row">
+
+                <!--<div class="col-lg-4 col-md-4 col-xs-12">-->
+                    <!--<label class="col-lg-4 col-md-4 col-xs-4">起始时间</label>-->
+                    <!--<input type="datetime-local" class="col-lg-8 col-md-8 col-xs-8" id="startTime"/>-->
+                <!--</div>-->
+                <div class="col-lg-6 col-md-6 col-xs-12">
+                    <label class="col-lg-4 col-md-4 col-xs-4">起始时间</label>
+                    <div class='input-group date form_datetime col-lg-8 col-md-8 col-xs-8' data-date-format="yyyy-mm-dd hh:ii:ss" id='js-start_time'>
+                        <input type='datetime' class="form-control" name="start_time" id="start_time" readonly="readonly"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-xs-12">
+                    <label class="col-lg-4 col-md-4 col-xs-4">结束时间</label>
+                    <div class='input-group date form_datetime col-lg-8 col-md-8 col-xs-8' data-date-format="yyyy-mm-dd hh:ii:ss" id='js-end_time'>
+                        <input type='datetime' class="form-control" name="end_time" id="end_time" readonly="readonly"/>
+                        <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row" style="margin-top: 20px">
+                <div class="col-lg-6 col-md-6 col-xs-12">
+                    <label class="col-lg-4 col-md-4 col-xs-4">课程名</label>
+                    <select class="col-lg-8 col-md-8 col-xs-8" id="courseID" name="courseID">
+                        <option value="">---</option>
+                    </select>
+                </div>
+                <div class="col-lg-6 col-md-6 col-xs-12">
+                    <div class="pull-right" style="margin-top: -5px">
+                        <button type="button" class="btn btn-info" onclick="query()">查找</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+
+        <div class="row" style="margin-top: 20px">
+            <div class="main-container">
+                <div class="table-container">
+                    <table class="table display dataTable table-hover table-condensed table-striped table-sm" id="testInfo" aria-describedby="testInfo">
+                        <thead>
+                        <tr>
+                            <th class="order-header text-left">考试号</th>
+                            <th class="order-header text-left">课程名</th>
+                            <th class="order-header text-left">开始时间</th>
+                            <th class="order-header text-left">结束时间</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/js/table_js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/js/table_js/dataTables.buttons.min.js}"></script>
+<script th:src="@{/js/table_js/dataTables.select.min.js}"></script>
+<script th:src="@{/js/adminNav.js}"></script>
+<script th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/js/bootstrap-datetimepicker.zh-CN.js}"></script>
+
+<script type='text/javascript' th:inline="javascript">
+    $(document).ready(function () {
+        chooseActive("#test_info");
+        getCourses();
+        initTable();
+        $('#js-start_time').datetimepicker({
+            language:  'zh-CN',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 0,
+            forceParse: 0,
+            minuteStep: 1
+        });
+        $('#js-end_time').datetimepicker({
+            language:  'zh-CN',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 0,
+            forceParse: 0,
+            minuteStep: 1
+        });
+    });
+
+    function getCourses() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:10008/getAllCourses",
+            data: {},
+            success: function (data) {
+                var selectCourse = document.getElementById("courseID");
+                for(var i in data) {
+                    selectCourse.options.add(new Option(data[i].name, data[i].id));
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.responseText);
+            }
+        })
+    }
+
+    function initTable() {
+        var table = $('#testInfo').dataTable({
+            dom: "Bfrtip",
+            "serverSide": true,
+            "processing": true,
+            pageLength: 20,
+            "ajax": {
+                url: "http://localhost:10008/getTestInfo",
+                type: "POST",
+                dataSrc: function (data) {
+                    return data.list;
+                },
+                data: function (d) {
+                    d.courseID = $("#courseID").val();
+                    d.startTime = $("#start_time").val();
+                    d.endTime = $("#end_time").val();
+                }
+            },
+            rowID: "testID",
+            columns: [    //每行对应的JSON的键名
+                { data: "testID" },
+                { data: "courseName" },
+                { data: "startTime" },
+                { data: "endTime" }
+            ],
+            select: false,  //行可以被选中
+            filter: false,  //没有使用DataTables默认的筛选组件
+            ordering: false,  //没有使用DataTables默认的排序方法
+            buttons: [],    //没有使用DataTables默认的button组件
+            language: {     //自定义表示语言
+                paginate: {
+                    first:    '第一页',
+                    previous: '上一页',
+                    next:     '下一页',
+                    last:     '最后一页'
+                },
+                "sProcessing": "处理中...",
+                "info": "第_PAGE_页，共_PAGES_页  共有记录_MAX_条",
+                "emptyTable": "",
+                "zeroRecords": "没有检索到记录",
+                "loadingRecords" : "载入中...",
+                "infoEmpty": "检索到记录0条",
+                "infoFiltered": "",
+            }
+        });
+    }
+
+    function query() {
+        var table = $("#testInfo").DataTable();
+        table.ajax.reload();
+    }
+
+    $('#testInfo').on('click','tr',function(e){
+        var line=$(this);
+//        $('tr.selected').removeClass('selected');
+//        if(line.hasClass('selected')){
+//            line.removeClass('selected')
+//        }else{
+//            line.addClass('selected')
+//        }
+        var id=$(this).find('td:first').text();
+
+        window.location.href = "http://localhost:10009/markList?testID="+id;
+
+        if(id==undefined){
+            return;
+        }
+
+    })
+</script>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{/js/ref/jquerysession.js}"></script>
+    <script>
+        var email = $.session.get("admin");
+        if(email==null) {
+            window.location.href = "http://localhost:10009/admin";
+        }
+    </script>
+    <title>在线考试系统</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/css/adminNav.css}" />
+    <style>
+        .paper_card {
+            width: 260px;
+            border-radius: 10px;
+            box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.15);
+            margin-right: 60px;
+            margin-bottom: 60px;
+            float:left;
+        }
+        .paper_link {
+            width: 260px;
+            padding: 3px;
+            font-size: 17px;
+            color: white;
+            background: #21831f;
+            border-radius: 0 0 10px 10px;
+            text-align: center;
+        }
+
+        .test_info{
+            padding: 5px;
+            padding-left: 30px;
+            /*text-align: center;*/
+        }
+
+        .title{
+            border-bottom: 1px solid lightgray;
+            font-size: 18px;
+            padding: 2px;
+            text-align: center;
+        }
+
+        a:link,a:visited,a:hover{
+            text-decoration:none;  /*超链接无下划线*/
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:include="common/adminNavbar :: admin_nav"></div>
+    <div class="container col-lg-offset-1 col-lg-10" style="margin-top: 60px">
+        <div class="row"><h3>试卷列表</h3></div>
+        <div id="test_papers" >
+
+        </div>
+    </div>
+</body>
+<script th:src="@{/js/ref/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/js/adminNav.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+    $(document).ready(function () {
+        chooseActive("#test_info");
+        initCards();
+    });
+
+    function initCards() {
+        var sidList = [[${sidList}]];
+        var test = {};
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:10008/getTest?testID="+[[${testID}]],
+            data: {},
+            success: function (data) {
+                test.courseName = data.courseName;
+                test.startTime = data.startTime;
+                test.endTime = data.endTime;
+                for(var i in sidList) {
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:10008/getStudent?sid="+sidList[i],
+                        data: {},
+                        success: function (data) {
+                            var sid = "学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号:"+data.sid;
+                            var name = "姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名:"+data.name;
+                            var course_name = "科&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;目:"+test.courseName;
+                            var start_time = "开始时间:"+test.startTime;
+                            var end_time = "结束时间:"+test.endTime;
+                            var link = "http://localhost:10009/testPaperDetail/"+[[${testID}]]+"/"+data.sid+"/"+data.name;
+                            var card = '<div class="paper_card ">\n' +
+                                '                <div class="title ">\n' +
+                                '                    <b>试卷信息</b>\n' +
+                                '                </div>\n' +
+                                '                <div class="card-block">\n' +
+                                '                    <div class="test_info">'+sid+'</div>\n' +
+                                '                    <div class="test_info">'+name+'</div>\n' +
+                                '                    <div class="test_info">'+course_name+'</div>\n' +
+                                '                    <div class="test_info">'+start_time+'</div>\n' +
+                                '                    <div class="test_info">'+end_time+'</div>\n' +
+                                '                    <div class="paper_link">' +
+                                '                       <a href="'+link+'">查看试卷</a>' +
+                                '                    </div>\n' +
+                                '                </div>\n' +
+                                '            </div>'
+                            $("#test_papers").append(card);
+                        }
+
+                    });
+                }
+            }
+        });
+
+     }
+</script>
+</html>
